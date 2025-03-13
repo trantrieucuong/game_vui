@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="vi" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #main-content}, ~{:: #js})}">
+<head>
+    <title>Đăng ký</title>
+</head>
+<body>
+
+<th:block id="main-content">
+    <section class="py-4">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-8">
+                    <div class="p-4 bg-body-tertiary">
+                        <h2 class="text-center mb-4 fs-2">Đăng ký tài khoản</h2>
+                        <!-- Form đăng ký -->
+                        <form id="form-register">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="sdt" class="form-label">Số điện thoại</label>
+                                <input type="text" class="form-control" id="sdt">
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password">
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirmPassword">
+                            </div>
+                            <div class="mb-3">
+                                <div class="mb-3">
+                                    <label for="province" class="form-label">Tỉnh/Thành phố</label>
+                                    <select name="province" id="province" class="form-select">
+                                        <option value="-1">Chọn tỉnh/thành phố</option>
+                                        <!-- Thêm các tỉnh/thành phố vào đây -->
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="district" class="form-label">Quận/Huyện</label>
+                                    <select name="district" id="district" class="form-select">
+                                        <option value="-1">Chọn quận/huyện</option>
+                                        <!-- Thêm các quận/huyện vào đây -->
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="town" class="form-label">Phường/Xã</label>
+                                    <select name="town" id="town" class="form-select">
+                                        <option value="-1">Chọn phường/xã</option>
+                                        <!-- Thêm các phường/xã vào đây -->
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Địa chỉ cụ thể</label>
+                                    <input type="text" name="address" class="form-control" id="address" placeholder="Nhập địa chỉ cụ thể">
+                                </div>
+
+                            </div>
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-primary px-5">Đăng ký</button>
+                                <p class="mt-3 mb-0">Quay lại <a class="text-primary text-decoration-underline" href="/dang-nhap">đăng nhập</a></p>
+                            </div>
+                        </form>
+                        <!-- Form xác thực OTP (hiển thị khi đăng ký thành công) -->
+                        <div id="otp-form" style="display: none;">
+                            <h4 class="text-center mb-4">Nhập mã OTP đã gửi đến email của bạn</h4>
+                            <p id="countdown-timer" class="text-center text-danger"></p> <!-- Hiển thị đồng hồ đếm ngược -->
+                            <form id="form-verify-otp">
+                                <div class="mb-3">
+                                    <label for="otp" class="form-label">Mã OTP</label>
+                                    <input type="text" class="form-control" id="otp">
+                                </div>
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-primary px-5">Xác nhận</button>
+                                </div>
+                            </form>
+                            <button id="resend-otp" class="btn btn-link text-primary d-block mx-auto mt-3" style="display: none;">Gửi lại mã OTP</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</th:block>
+
+<!-- JavaScript for Form Handling -->
+<!-- JavaScript for Form Handling -->
+<th:block id="js">
+    <script th:inline="javascript">
+        const formRegisterEl = document.getElementById('form-register');
+        const formOtpEl = document.getElementById('otp-form');
+        const otpEl = document.getElementById('otp');
+        const formVerifyOtpEl = document.getElementById('form-verify-otp');
+        const emailEl = document.getElementById('email');
+        const countdownDisplay = document.getElementById('countdown-timer');
+        const resendOtpBtn = document.getElementById('resend-otp');
+
+        let countdownInterval; // Biến để lưu trữ ID của interval
+
+        // Hàm khởi tạo đồng hồ đếm ngược
+        function startCountdown(duration, display) {
+            let timer = duration, minutes, seconds;
+
+            // Nếu đã có interval cũ, dừng lại
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
+            countdownInterval = setInterval(() => {
+                minutes = Math.floor(timer / 60);
+                seconds = timer % 60;
+
+                // Hiển thị thời gian
+                display.textContent = `Thời gian còn lại: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+                if (--timer < 0) {
+                    clearInterval(countdownInterval); // Dừng đồng hồ
+                    display.textContent = "Mã OTP đã hết hạn. Vui lòng gửi lại mã.";
+                    document.querySelector("#form-verify-otp button").disabled = true; // Vô hiệu hóa nút "Xác nhận"
+                    resendOtpBtn.style.display = "block"; // Hiển thị nút "Gửi lại mã OTP"
+                }
+            }, 1000);
+        }
+
+        formRegisterEl.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const data = {
+                name: document.getElementById('name').value,
+                email: emailEl.value,
+                password: document.getElementById('password').value,
+                confirmPassword: document.getElementById('confirmPassword').value,
+                province: document.getElementById('province').value,
+                district: document.getElementById('district').value,
+                town: document.getElementById('town').value,
+                address: document.getElementById('address').value,
+                sdt: document.getElementById('sdt').value
+            };
+
+            // Gọi API đăng ký
+            axios.post('/api/auth/dang_ky', data)
+                .then((response) => {
+                    if (response.status === 200) {
+                        toastr.success('Đăng ký thành công');
+                        formRegisterEl.style.display = 'none';
+                        formOtpEl.style.display = 'block'; // Hiển thị form nhập OTP
+
+                        // Bắt đầu đếm ngược (5 phút)
+                        const fiveMinutes = 5 * 60; // 5 phút tính bằng giây
+                        startCountdown(fiveMinutes, countdownDisplay);
+                    } else {
+                        toastr.error('Đăng ký thất bại');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error(error.response.data || 'Đăng ký thất bại');
+                });
+        });
+
+        formVerifyOtpEl.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const otpData = {
+                email: emailEl.value, // Sử dụng email từ form đăng ký
+                otp: otpEl.value
+            };
+
+            axios.post('/api/auth/xac-thuc-otp', otpData)
+                .then((response) => {
+                    if (response.status === 200) {
+                        toastr.success('Tài khoản đã được xác thực thành công!');
+                        window.location.href = '/dang-nhap';
+                    } else {
+                        toastr.error('Mã OTP không chính xác');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error(error.response.data || 'Xác thực thất bại');
+                });
+        });
+
+        // Xử lý khi người dùng nhấn "Gửi lại mã OTP"
+        resendOtpBtn.addEventListener("click", () => {
+            axios.post('/api/auth/gui-lai-otp', { email: emailEl.value })
+                .then((response) => {
+                    if (response.status === 200) {
+                        toastr.success('Mã OTP đã được gửi lại!');
+                        resendOtpBtn.style.display = "none"; // Ẩn nút "Gửi lại mã OTP"
+                        document.querySelector("#form-verify-otp button").disabled = false; // Kích hoạt lại nút "Xác nhận"
+
+                        // Khởi tạo lại đồng hồ đếm ngược
+                        const fiveMinutes = 5 * 60; // 5 phút tính bằng giây
+                        startCountdown(fiveMinutes, countdownDisplay);
+                    } else {
+                        toastr.error('Gửi lại mã OTP thất bại');
+                    }
+                })
+                .catch((error) => {
+                    toastr.error(error.response.data || 'Gửi lại mã OTP thất bại');
+                });
+        });
+
+    </script>
+</th:block>
+
+</body>
+</html>
+
+
+

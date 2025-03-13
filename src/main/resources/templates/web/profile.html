@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: #main-content}, ~{:: #js})}">
+<head>
+    <title>Trang chủ</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
+              integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g=="
+              crossorigin="anonymous" referrerpolicy="no-referrer"/>
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"
+              integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw=="
+              crossorigin="anonymous" referrerpolicy="no-referrer"/>
+        <link rel="stylesheet" th:href="@{/web/css/style.css}"/>
+    </th:block>
+</head>
+
+<body>
+<th:block id="main-content">
+    <div class="container">
+        <h2>Thông tin cá nhân</h2>
+
+        <div class="profile-container">
+            <!-- Phần cài đặt thông tin cá nhân -->
+            <div class="profile-settings">
+                <p><strong>Cài đặt thông tin cá nhân</strong></p>
+                <form id="profileForm" class="personal-info-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="fullName">Họ và tên *</label>
+                        <input type="text" id="fullName" name="name" required placeholder="Nhập họ và tên"
+                               th:value="${user.name}" />
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Số điện thoại</label>
+                        <input type="text" id="phone" name="sdt" placeholder="Nhập số điện thoại"
+                               th:value="${user.sdt}" />
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Nhập email"
+                               th:value="${user.email}" readonly class="readonly-email" />
+                    </div>
+
+
+                    <button type="button" id="saveProfile" class="btn-save">Lưu</button>
+                </form>
+            </div>
+
+            <!-- Phần hình ảnh và thông tin cá nhân -->
+            <div class="profile-info">
+                <div class="avatar-container">
+                    <img id="avatarImage" th:src="@{${user.avatar}}" alt="Ảnh đại diện" class="user-avatar"
+                         onerror="this.onerror=null; this.src='/img/logodji.png';" />
+                    <div class="avatar-upload-icon">
+                        <input type="file" id="avatarFileInput" style="display: none;" onchange="uploadAvatar()">
+                        <label for="avatarFileInput">
+                            <img src="/img/camera_icon.png" alt="Cập nhật ảnh" class="avatar-icon">
+                        </label>
+                    </div>
+                </div>
+
+                <p><strong>Chào bạn trở lại,</strong></p>
+                <p><strong>Tên:</strong> <span id="userName" th:text="${user.name}">Nguyễn Văn A</span></p>
+                <p><strong>Tài khoản đã xác thực:</strong> <span th:text="${user.isVerified ? 'Đã xác thực' : 'Chưa xác thực'}">Có</span></p>
+                <p><strong>Nâng cấp tài khoản:</strong> <a href="#">Nâng cấp Pro để donate Cho toy</a></p>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block id="js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"
+            integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        // Thực hiện upload avatar
+        function uploadAvatar() {
+            const formData = new FormData();
+            const fileInput = document.getElementById('avatarFileInput');
+            formData.append("file", fileInput.files[0]);
+
+            const pathname = window.location.pathname;
+            const userCode = pathname.split('/')[2];
+
+            if (!userCode) {
+                console.error('User code not found');
+                return;
+            }
+
+            fetch(`/api/auth/${userCode}/upload-thumbnail`, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.filePath) {
+                        console.log('File uploaded successfully:', data.filePath);
+                        document.querySelector('.user-avatar').src = data.filePath;
+                    } else {
+                        console.error('Error uploading avatar:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error uploading avatar:', error);
+                });
+        }
+
+        // Cập nhật thông tin cá nhân và upload CV
+        document.getElementById('saveProfile').addEventListener('click', async () => {
+            const pathname = window.location.pathname;
+            const userCode = pathname.split('/')[2];
+            const formData = new FormData(document.getElementById('profileForm'));
+
+            // Xử lý upload CV
+            const cvFile = formData.get('cv');
+            if (cvFile) {
+                const cvData = new FormData();
+                cvData.append('cv', cvFile);
+
+                try {
+                    const cvResponse = await fetch(`/api/auth/${userCode}/upload-cv`, {
+                        method: 'POST',
+                        body: cvData
+                    });
+
+                    if (cvResponse.ok) {
+                        const cvResult = await cvResponse.json();
+                        console.log('CV uploaded:', cvResult);
+                    } else {
+                        toastr.error('Lỗi khi tải lên CV!');
+                    }
+                } catch (error) {
+                    console.error('Error uploading CV:', error);
+                    toastr.error('Đã xảy ra lỗi khi tải lên CV!');
+                }
+            }
+
+            // Cập nhật thông tin cá nhân
+            const data = {
+                name: formData.get('name'),
+                sdt: formData.get('sdt'),
+                email: formData.get('email'),
+            };
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/auth/${userCode}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                if (response.ok) {
+                    const updatedUser = await response.json();
+                    toastr.success('Cập nhật thông tin cá nhân thành công!');
+                    console.log(updatedUser);
+                } else {
+                    const error = await response.json();
+                    toastr.error(`Lỗi: ${error.message || 'Không thể cập nhật thông tin'}`);
+                }
+            } catch (error) {
+                console.error('Lỗi kết nối đến server:', error);
+                toastr.error('Đã xảy ra lỗi. Vui lòng thử lại sau.');
+            }
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

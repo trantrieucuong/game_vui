@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{::title}, ~{::#css}, ~{::#main-content}, ~{::#js})}">
+<head>
+    <title>Trang chủ</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
+              integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g=="
+              crossorigin="anonymous" referrerpolicy="no-referrer"/>
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"
+              integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw=="
+              crossorigin="anonymous" referrerpolicy="no-referrer"/>
+        <link rel="stylesheet" th:href="@{/web/css/style.css}"/>
+        <!-- Bootstrap CSS -->
+
+    </th:block>
+</head>
+<body>
+<th:block id="main-content">
+    <div class="blog-container container" style="background-color: #f4f7fa; margin: 30px auto; padding: 20px; border-radius: 10px;">
+        <!-- Blog Details -->
+        <h1 th:text="${blog.title}">Tiêu đề Blog</h1>
+        <hr>
+        <div class="blog-content" th:utext="${blog.content}">Nội dung Blog</div>
+        <p><strong>Tác giả:</strong> <span th:text="${blog.user.name}">Tên tác giả</span></p>
+        <p><strong>Ngày viết:</strong> <span th:text="${#dates.format(blog.createdAt, 'dd/MM/yyyy')}">Ngày viết</span></p>
+    </div>
+
+    <!-- Review Section -->
+    <section class="py-4">
+        <div class="container">
+            <div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-3">Bình luận</h3>
+                    <button class="btn btn-primary" id="btn-open-modal-review" th:if="${session.currentUser != null}">
+                        Viết đánh giá
+                    </button>
+                </div>
+
+                <p th:if="${session.currentUser == null}" class="mt-2">
+                    Vui lòng
+                    <a href="/dang-nhap" class="text-primary text-decoration-underline">đăng nhập</a>
+                    để viết bình luận.
+                </p>
+
+                <div class="review-list">
+                    <div class="rating-item d-flex align-items-center mb-3 pb-3" th:each="review : ${reviews}">
+                        <div class="rating-avatar">
+                            <img th:src="${review.user.avatar}" th:alt="${review.user.name}" class="rounded-circle"
+                                 style="width: 50px; height: 50px; object-fit: cover;">
+                        </div>
+                        <div class="rating-info ms-3">
+                            <div class="d-flex align-items-center">
+                                <p class="rating-name mb-0"><strong th:text="${review.user.name}">Tên người dùng</strong></p>
+                                <p class="rating-time mb-0 ms-2" th:text="${#dates.format(review.updatedAt, 'dd/MM/yyyy')}">Ngày bình luận</p>
+                            </div>
+
+                            <p class="rating-content mt-1 mb-0 text-muted" th:text="${review.content}">Nội dung bình luận</p>
+
+                            <div class="rating-action mt-2"
+                                 th:if="${session.currentUser != null && session.currentUser == review.user.userCode}">
+                                <a href="javascript:void(0)" class="text-primary text-decoration-underline me-2"
+                                   th:onclick="|openModalUpdate(${review.reviewCode})|">Sửa</a>
+                                <a href="javascript:void(0)" class="text-danger text-decoration-underline"
+                                   th:onclick="|deleteReview(${review.reviewCode})|">Xóa</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Review -->
+    <div class="modal fade" id="modal-review" tabindex="-1" aria-labelledby="modalReviewLabel" aria-hidden="true"
+         th:style="${session.currentUser == null ? 'display:none' : ''}">
+    <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalReviewLabel">Viết đánh giá</h5>
+                    <div type="button"  >Ấn vào khoảng trống để thoát</div>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-center" th:text="${blog.title}">Tên Blog</h5>
+                    <form th:action="@{/reviews/{blogCode}(blogCode=${blog.blogCode})}" method="post">
+                        <div class="mb-3">
+                            <textarea name="content" class="form-control" id="rating-content" rows="5" placeholder="Viết đánh giá"></textarea>
+                        </div>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <input type="hidden" name="rating" id="rating-input">
+                            <button type="submit" class="btn btn-primary px-5">Hoàn tất</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block id="js">
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            const btnOpenModal = document.getElementById("btn-open-modal-review");
+            const modalElement = document.getElementById("modal-review");
+            const form = modalElement.querySelector("form");
+            const contentInput = document.getElementById("rating-content");
+
+            if (btnOpenModal && modalElement && form) {
+                const modalInstance = new bootstrap.Modal(modalElement);
+
+                btnOpenModal.addEventListener("click", function () {
+                    modalInstance.show();
+                });
+
+                // Validate form trước khi gửi
+                form.addEventListener("submit", function (event) {
+                    if (contentInput.value.trim() === "") {
+                        event.preventDefault(); // Ngăn chặn gửi form
+                        alert("Nội dung đánh giá không được để trống!");
+                        contentInput.focus();
+                    }
+                });
+            }
+        });
+    </script>
+
+</th:block>
+
+
+</body>
+</html>
+

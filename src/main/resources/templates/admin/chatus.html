@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+  <title>Chat - Admin</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+</head>
+<body>
+<div class="content-wrapper">
+  <h2>Kênh Thế Giới</h2>
+  <div id="messageArea" class="message-container"></div>
+  <form id="messageForm">
+    <input type="text" id="message" placeholder="Type a message..." />
+    <button type="submit">Send</button>
+  </form>
+
+</div>
+<th:block id="js">
+  <script>
+    var socket = new SockJS('/ws');
+    var stompClient = Stomp.over(socket);
+    var messageInput = document.querySelector('#message');
+    var messageArea = document.querySelector('#messageArea');
+    var username = 'admin'; // Admin vẫn là người quản lý
+
+    stompClient.connect({}, function (frame) {
+      console.log('Connected: ' + frame);
+      stompClient.subscribe('/topic/public', function (messageOutput) {
+        var message = JSON.parse(messageOutput.body);
+        displayMessage(message);
+      });
+
+      // Gửi thông báo admin tham gia chat
+      stompClient.send("/app/chat.addUser", {}, JSON.stringify({sender: username, type: 'JOIN'}));
+      // Chỉ gửi tin nhắn khi admin join, tránh tin nhắn null
+      displayMessage({sender: username, content: "đã join vào hội thoại", type: 'INFO'});
+    });
+
+    function sendMessage(event) {
+      var messageContent = messageInput.value.trim();
+      if (messageContent) {
+        var chatMessage = {
+          sender: username,
+          content: messageInput.value,
+          type: 'CHAT'
+        };
+        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+        messageInput.value = '';
+      }
+      event.preventDefault();
+    }
+
+    function displayMessage(message) {
+      var messageElement = document.createElement('p');
+      if (message.type === 'INFO') {
+        messageElement.textContent = message.sender + ": " + message.content;
+        messageElement.classList.add('message-info');
+      } else if (message.content !== null && message.content.trim() !== "") {
+        messageElement.textContent = message.sender + ": " + message.content;
+        messageElement.classList.add('message-chat');
+      }
+      messageArea.appendChild(messageElement);
+      messageArea.scrollTop = messageArea.scrollHeight; // Tự động cuộn xuống cuối khi có tin nhắn mới
+    }
+
+    document.querySelector('#messageForm').addEventListener('submit', sendMessage, true);
+  </script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+  <title>Thêm Blog Role</title>
+
+  <th:block id="css">
+    <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/toastr/toastr.min.css}"/>
+  </th:block>
+</head>
+
+<body>
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-12">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item active">Thêm Blog Role</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row py-2">
+        <div class="col-6">
+          <button type="button" class="btn btn-info px-4" id="btn-create">Lưu</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <form id="form-create-blog-role">
+                <div class="form-group">
+                  <label>Tên Role</label>
+                  <input type="text" class="form-control" id="roleName" name="roleName" required />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<th:block id="js">
+  <script th:src="@{/admin-assets/admin-lte/plugins/toastr/toastr.min.js}"></script>
+
+  <script th:inline="javascript">
+    document.getElementById('btn-create').addEventListener('click', function () {
+      const roleName = document.getElementById('roleName').value.trim();
+
+      if (!roleName) {
+        toastr.error('Tên Role không được để trống');
+        return;
+      }
+
+      const data = {
+        blogRoleCode: null, // Không gửi mã, server sẽ tự tạo
+        roleName: roleName
+      };
+
+      // 🛠 In JSON ra console để kiểm tra trước khi gửi request
+      console.log("Dữ liệu JSON gửi lên:", JSON.stringify(data, null, 2));
+
+      axios.post('/api/blog-roles', data)
+              .then(response => {
+                toastr.success('Thêm Blog Role thành công');
+                setTimeout(() => window.location.href = '/admin/blog-roles', 1500);
+              })
+              .catch(error => {
+                console.error("Lỗi API:", error.response?.data);
+                toastr.error(error.response?.data?.message || 'Có lỗi xảy ra');
+              });
+    });
+  </script>
+</th:block>
+
+</body>
+</html>

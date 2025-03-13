@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+
+
+<body>
+<header class="header">
+    <nav class="navbar">
+        <div class="logo">
+            <a href="/"><img src="/img/github.png" alt="DJI Logo"></a>
+        </div>
+        <ul class="menu">
+            <li><a href="/blog/IT">Blog Công nghệ thông tin</a></li>
+            <li><a href="/blog/LiVing">Blog đời sống</a></li>
+            <li><a href="#">Cẩm nang nghề nghiệp</a></li>
+            <li><a href="http://localhost:8080/chat" class="chat-button">chat AI</a></li>
+        </ul>
+
+        <div class="user-info">
+            <div th:if="${session.currentUser == null}">
+                <a class="text-white" href="/dang-nhap">Đăng nhập</a>
+            </div>
+            <div th:if="${session.currentUser != null}" class="user-dropdown">
+                <p th:text="${session.currentUser.name}" class="mb-0 me-2 text-white"></p>
+                <img th:src="${session.currentUser.avatar}" class="avatauser" alt="User Image" onerror="this.onerror=null; this.src='/img/logodji.png';">
+                <!-- Dropdown menu -->
+                <div class="dropdown-content">
+<!--                    thong tin ca nhan-->
+                    <div class="user-info-container">
+                        <img th:src="${session.currentUser.avatar}" class="user-avatar-large" alt="User Image"
+                             onerror="this.onerror=null; this.src='/img/logodji.png';">
+                        <div class="user-details">
+                            <div>
+                                <span>Họ tên:</span>
+                                <p th:text="${session.currentUser.name}" class="user-info-text">Họ tên</p>
+                            </div>
+                            <div>
+                                <span>Mã ứng viên:</span>
+                                <p th:text="${session.currentUser.userCode}" class="user-info-text"></p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!--chưc năng-->
+                    <a th:href="'/editprofile/' + ${session.currentUser.userCode}">Chỉnh sửa hồ sơ</a>
+                    <a href="javascript:void(0)" onclick="logout()">Đăng xuất</a>
+                </div>
+            </div>
+
+        </div>
+    </nav>
+</header>
+
+
+
+
+
+</body>
+
+</html>

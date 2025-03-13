@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="vi" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{web/layout/layout :: layout(~{:: title}, ~{}, ~{:: #main-content}, ~{:: #js})}">
+<head>
+  <title>Xác thực OTP</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+</head>
+<body>
+
+<th:block id="main-content">
+  <section class="py-4">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-4">
+          <div class="p-4 bg-body-tertiary">
+            <h2 class="text-center mb-4 fs-2">Xác thực OTP</h2>
+            <form id="form-otp-verification">
+              <div class="mb-3">
+                <label for="otp" class="form-label">Nhập mã OTP</label>
+                <input type="text" class="form-control" id="otp" name="otp" required>
+              </div>
+              <input type="hidden" id="email" name="email" th:value="${email}"> <!-- Truyền email vào input ẩn -->
+              <div class="mb-3">
+                <button type="submit" class="btn btn-primary px-5">Xác thực</button>
+              </div>
+            </form>
+            <p class="mt-3 mb-0">Chưa nhận được mã OTP? <a class="text-primary text-decoration-underline" href="#">Gửi lại mã OTP</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</th:block>
+
+<th:block id="js">
+  <script>
+    const otpEl = document.getElementById('otp');
+    const emailEl = document.getElementById('email');
+    const formOtpEl = document.getElementById('form-otp-verification');
+
+    formOtpEl.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const data = {
+        email: emailEl.value,
+        otp: otpEl.value
+      };
+
+      // Gọi API để xác thực OTP
+      axios.post('/api/auth/verify-otp', data)
+              .then((response) => {
+                if (response.status === 200) {
+                  toastr.success('Xác thực thành công');
+                  setTimeout(() => {
+                    window.location.href = '/'; // Điều hướng về trang chủ sau khi xác thực thành công
+                  }, 1500);
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+                toastr.error(error.response?.data?.message || "Lỗi hệ thống");
+              });
+    });
+  </script>
+</th:block>
+
+</body>
+</html>
