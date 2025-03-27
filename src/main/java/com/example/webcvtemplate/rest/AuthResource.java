@@ -1,13 +1,9 @@
 package com.example.webcvtemplate.rest;
 
-import com.example.webcvtemplate.entity.Blog;
 import com.example.webcvtemplate.entity.User;
-import com.example.webcvtemplate.exception.ResourceNotFoundException;
 import com.example.webcvtemplate.model.request.LoginRequest;
 import com.example.webcvtemplate.model.request.RegisterRequest;
-import com.example.webcvtemplate.repository.UserRepository;
 import com.example.webcvtemplate.service.AuthService;
-import com.example.webcvtemplate.service.FileService;
 import com.example.webcvtemplate.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 
 @RestController

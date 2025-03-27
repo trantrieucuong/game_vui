@@ -1,6 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org"
-      th:replace="~{web/layout/layout :: layout(~{::title}, ~{::#css}, ~{::#main-content}, ~{::#js})}">
+<html lang="en">
 <head>
     <title>Trang chủ</title>
 
@@ -18,129 +17,61 @@
 
 <body>
 <th:block id="main-content">
-    <div class="marquee-container">
-        <div class="marquee-content">
-            🚀 Do thiếu kinh phí lên AI nó không được thông minh lắm !!! Donate để tớ có thể cung cấp dịch vụ tốt hơn !!! 🤑
+    <section class="intro-section">
+
+        <!-- Nền cờ đỏ sao vàng -->
+        <div class="background-flag"></div>
+
+
+
+        <!-- Video Intro 1 -->
+        <div class="video-wrapper" id="video1-wrapper">
+            <video id="video1" autoplay muted playsinline>
+                <source src="/video/videointro2.mp4" type="video/mp4">
+                Trình duyệt của bạn không hỗ trợ video.
+            </video>
         </div>
-    </div>
 
-    <section class="section-image">
-        <div class="img-overlay"></div>
+        <!-- Video Intro 2 -->
+        <div class="video-wrapper" id="video2-container">
+            <video id="video2" autoplay loop muted playsinline>
+                <source src="/video/videointro1.mp4" type="video/mp4">
+                Trình duyệt của bạn không hỗ trợ video.
+            </video>
+        </div>
 
-        <div class="intro">
-            <div class="row">
-                <div class="col-md-12">
-                    <h5>Hi there</h5>
+        <!-- Nút đăng nhập -->
+        <a href="/dang-nhap" id="login-btn">Đăng nhập</a>
 
-
-                    <h1>I'm Cuong tran dev for java</h1>
-
-
-                    <p class="intro-desc"><span>Developer</span>
-                        <span class="colour-splash">•</span>
-                        <span>Adventurer</span> <span class=
-                                                              "colour-splash">•</span> <span>Coffee
-                        Drinker and read book</span></p>
-                </div>
-                <!-- /col-md-12 -->
-            </div>
-
-
-            <div class="row" style="justify-content: space-around;">
-                <div class="col-md-8 col-md-offset-2">
-                    <div class="social">
-                        <a href="https://www.facebook.com/bangtran.bang.900" target="_blank">
-                            <i class="fab fa-facebook fa-3x"></i>
-                        </a>
-
-                        <a href="https://www.instagram.com/trantrieuc/" target="_blank">
-                            <i class="fab fa-instagram fa-3x"></i>
-                        </a>
-
-                        <a href="https://www.linkedin.com/in/tr%E1%BA%A7n-tri%E1%BB%81u-c%C6%B0%E1%BB%9Dng-77a675312/" target="_blank">
-                            <i class="fab fa-linkedin fa-3x"></i>
-                        </a>
-
-                        <a href="https://github.com/trantrieucuong" target="_blank">
-                            <i class="fab fa-github fa-3x"></i>
-                        </a>
-
-                    </div><!-- /social -->
-                </div><!-- /col-md-8 -->
-            </div><!-- /row -->
-
-
-
-            <div class="bottom">
-                <a href="#about">
-                    <div class="mouse-icon">
-                        <div class="scroll">
-                        </div>
-                    </div></a>
-            </div>
-        </div><!-- /intro -->
     </section>
-    <h1 class="tieude text-center my-4">About Me</h1>
-    <div class="about-me">
-        <div class="containerprofile">
-            <div class="profile">
-                <img style="border-radius: 30px" src="./img/cuongPNG.PNG" alt="Cuong Tran">
-            </div>
-            <div class="info">
-                <h2>About Me</h2>
-                <p><strong>Name:</strong> Trần Triều Cường</p>
-                <p><strong>Specialized:</strong> Java Developer</p>
-                <p><strong>Interest:</strong> Coder, adventure, drinking coffee & reading books</p>
-                <p><strong>Job:</strong> Programmer at FPT SoftWare</p>
-                <p><strong>Email:</strong> <a href="mailto:trancuong15112004@gmail.com">trancuong15112004@gmail.com</a></p>
-            </div>
-        </div>
-    </div>
-    <h1 class="tieude text-center my-4">Prologue</h1>
-    <div class="about-me">
-        <div class="container">
-
-            <div class="infoprologue">
-                <p><strong>Welcome to my web add</strong></p>
-                <p><strong>This app is built upon the knowledge and experience gained from two years of studying at FPT Polytechnic. The inspiration behind it is the desire to create a healthy playground, sharing Cường's knowledge, experience, and insights with everyone.</strong></p>
-                <p><strong>Here, Cường will share about projects, life, work, and various issues in both personal and professional aspects. There will be bugs that you might be wondering about, as well as stories about working in a corporate environment.</strong></p>
-                <p><strong>Cường firmly believes that this will be a valuable platform for students and IT professionals alike. Cường sincerely thanks everyone!</strong></p>
-
-            </div>
-
-        </div>
-    </div>
 
 
 
-
-
-    <h1 class="tieude text-center my-4">Tin Nổi Bật</h1>
-
-    <div class="blog-container row">
-        <!-- Duyệt qua danh sách bài viết -->
-        <div class="blog-card col-lg-3 col-md-4 col-sm-6 col-12 mb-4" th:each="blog : ${latestBlogs}">
-            <a class="blog-link d-block h-100 text-decoration-none" th:href="@{/blogs/{blogCode}(blogCode=${blog.blogCode})}">
-                <!-- Ảnh bìa -->
-                <div class="blog-thumbnail">
-                    <img th:src="${blog.thumbnail != null ? blog.thumbnail : '/default-thumbnail.jpg'}"
-                         alt="${blog.title}" class="blog-image w-100">
-                </div>
-
-                <!-- Nội dung -->
-                <div class="blog-content p-3">
-                    <h2 class="blog-title h5 mb-2" th:text="${blog.title != null ? blog.title : 'Không có tiêu đề'}">
-                        Tiêu đề bài viết
-                    </h2>
-                </div>
-            </a>
-        </div>
-    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 
 </th:block>
 
 <th:block id="js">
+    <script>
+    const video1 = document.getElementById("video1");
+    const video2Container = document.getElementById("video2-container");
+    const loginBtn = document.getElementById("login-btn");
+
+    // Khi tải trang, phát video 1
+    window.addEventListener("load", () => {
+        video1.play().catch(err => console.warn("Autoplay bị chặn:", err));
+    });
+
+    // Khi video 1 kết thúc
+    video1.addEventListener("ended", () => {
+        document.getElementById("video1-wrapper").style.display = "none";
+        video2Container.style.display = "flex"; // Hiện video 2
+        loginBtn.style.display = "inline-block";
+    });
+</script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"
             integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>

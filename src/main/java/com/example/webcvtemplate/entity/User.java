@@ -33,10 +33,7 @@ public class User {
     String nameCompaly;
 
     String sdt;
-    // Các trường mới liên quan đến địa chỉ
-    String province; // Lưu tên tỉnh/thành phố
-    String district; // Lưu tên quận/huyện
-    String town;     // Lưu tên phường/xã
+
     String address;
 
     @Enumerated(EnumType.STRING)
@@ -62,9 +59,6 @@ public class User {
                 ", password='" + password + '\'' +
                 ", avatar='" + avatar + '\'' +
                 ", sdt='" + sdt + '\'' +
-                ", province='" + province + '\'' +
-                ", district='" + district + '\'' +
-                ", town='" + town + '\'' +
                 ", address='" + address + '\'' +
                 ", role=" + role +
                 ", otp='" + otp + '\'' +

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+  <title th:text="${lesson.lessonTitle}">Chi tiết bài học</title>
+
+  <th:block id="css">
+    <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.css}"/>
+    <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
+    <link rel="stylesheet" th:href="@{/admin-assets/assets/css/style.css}">
+  </th:block>
+</head>
+
+<body>
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-12">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="/admin/dashboard">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item">
+              <a href="/admin/lessons">Danh sách bài học</a>
+            </li>
+            <li class="breadcrumb-item active" th:text="${lesson.lessonTitle}">
+              Chi tiết bài học
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row py-2">
+        <div class="col-6">
+          <a href="/admin/lessons" class="btn btn-default">
+            <i class="fas fa-chevron-left"></i> Quay lại
+          </a>
+          <button type="button" class="btn btn-info px-4" id="btn-update">
+            Cập nhật
+          </button>
+        </div>
+        <div class="col-6 d-flex justify-content-end">
+          <button type="button" class="btn btn-danger px-4" id="btn-delete">
+            Xóa
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <form id="form-update-lesson">
+                <div class="row">
+                  <div class="col-md-8">
+
+                    <div class="form-group">
+                      <label>Tiêu đề</label>
+                      <input type="text" class="form-control" id="lessonTitle" name="lessonTitle"
+                             th:value="${lesson.lessonTitle}"/>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Nội dung bài học</label>
+                      <textarea id="content" class="form-control" rows="5"
+                                name="description" th:text="${lesson.description}"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Trạng thái</label>
+                      <select id="status" class="form-control" name="status">
+                        <option value="false" th:selected="${lesson.status == false}">
+                          Nháp
+                        </option>
+                        <option value="true" th:selected="${lesson.status == true}">
+                          Công khai
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mt-4">
+                    <div class="col-12">
+                      <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                          <h3 class="card-title">Danh sách Video</h3>
+                          <input type="file" id="videoInput" accept="video/*" style="display: none;">
+                        </div>
+                        <div class="card-body">
+                          <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                              <th>Tiêu đề</th>
+                              <th>Video</th>
+                              <th>Thời lượng (Giây)</th>
+                              <th>Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody id="videoTableBody">
+                            <tr th:each="video : ${videos}">
+                              <td th:text="${video.videoTitle}"></td>
+                              <td><a th:href="${video.videoUrl}" target="_blank">Xem video</a></td>
+                              <td th:text="${video.durationMinutes}"></td>
+                              <td>
+                                <button type="button" class="btn btn-warning btn-update-video">
+                                  <i class="fas fa-edit"></i> Cập nhật
+                                </button>
+                              </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(videos)}">
+                              <td colspan="4" class="text-center">Không có video nào</td>
+                            </tr>
+                            </tbody>
+                          </table>
+                          <button type="button" class="btn btn-primary" id="btn-add-video">
+                            <i class="fas fa-plus"></i> Thêm Video
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<th:block id="js">
+  <script th:src="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.js}"></script>
+  <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
+  <script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = $('#form-update-lesson');
+
+      // Khởi tạo Summernote cho phần nội dung bài học
+      $('#content').summernote({
+        height: 500,
+      });
+
+      // Validate form
+      form.validate({
+        rules: {
+          lessonTitle: { required: true },
+          description: { required: true },
+          status: { required: true }
+        },
+        messages: {
+          lessonTitle: { required: "Tiêu đề không được để trống" },
+          description: { required: "Mô tả không được để trống" },
+          status: { required: "Trạng thái không được để trống" }
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+          error.addClass('invalid-feedback');
+          element.closest('.form-group').append(error);
+        },
+        highlight: function (element) {
+          $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element) {
+          $(element).removeClass('is-invalid');
+        }
+      });
+
+      // Lấy thông tin bài học
+      const lesson = [[${lesson}]];
+      const lessonCode = lesson.lessonCode;
+
+      const titleInput = document.getElementById("lessonTitle");
+      const descriptionInput = document.getElementById("content");
+      const statusInput = document.getElementById("status");
+      const updateButton = document.getElementById("btn-update");
+      const deleteButton = document.getElementById("btn-delete");
+
+      // Xử lý sự kiện cập nhật bài học
+      updateButton.addEventListener("click", function () {
+        if (!form.valid()) return;
+
+        if (!lessonCode) {
+          alert("Lỗi: Mã bài học không hợp lệ!");
+          return;
+        }
+
+        const data = {
+          lessonTitle: titleInput.value.trim(),
+          description: descriptionInput.value.trim(),
+          status: statusInput.value === "true"
+        };
+
+        fetch(`/api/lessons/${lessonCode}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        })
+                .then(response => {
+                  if (response.ok) {
+                    alert("Cập nhật thành công!");
+                    location.reload();
+                  } else {
+                    return response.json().then(err => {
+                      alert("Cập nhật thất bại: " + err.message);
+                    });
+                  }
+                })
+                .catch(error => console.error("Lỗi cập nhật:", error));
+      });
+
+      // Xử lý sự kiện xóa bài học
+      deleteButton.addEventListener('click', function () {
+        if (confirm("Bạn có chắc chắn muốn xóa bài học này?")) {
+          fetch(`/api/lessons/${lessonCode}`, {
+            method: 'DELETE'
+          })
+                  .then(response => {
+                    if (response.ok) {
+                      alert("Xóa thành công!");
+                      window.location.href = "/admin/lessons";
+                    } else {
+                      return response.json().then(err => {
+                        alert("Xóa thất bại: " + err.message);
+                      });
+                    }
+                  })
+                  .catch(error => console.error("Lỗi xóa:", error));
+        }
+      });
+    });
+
+  </script>
+  <script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+      const videoInput = document.getElementById("videoInput");
+      const addVideoButton = document.getElementById("btn-add-video");
+      const videoTableBody = document.getElementById("videoTableBody");
+      const lessonCode = [[${lesson.lessonCode}]];
+
+      addVideoButton.addEventListener("click", function () {
+        videoInput.click();
+      });
+
+      videoInput.addEventListener("change", async function (event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+          const response = await fetch(`/api/videos/upload/${lessonCode}`, {
+            method: "POST",
+            body: formData
+          });
+
+          if (!response.ok) {
+            throw new Error("Lỗi khi tải video. Hãy thử lại.");
+          }
+
+          const video = await response.json();
+          alert("Tải video thành công!");
+
+          const newRow = `<tr>
+          <td>${video.videoCode}</td>
+          <td>${video.videoTitle}</td>
+          <td><a href="${video.videoUrl}" target="_blank">Xem video</a></td>
+          <td>${video.durationMinutes}</td>
+        </tr>`;
+
+          videoTableBody.innerHTML += newRow;
+        } catch (error) {
+          alert(error.message);
+        }
+      });
+    });
+  </script>
+</th:block>
+</body>
+</html>

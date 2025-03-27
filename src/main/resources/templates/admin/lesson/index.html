@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+  <title>Tất cả bài viết</title>
+
+  <th:block id="css">
+
+  </th:block>
+</head>
+
+<body>
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-12">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="/admin/dashboard">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">
+              Danh sách bài học
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row py-2">
+        <div class="col-12">
+          <a href="/admin/lesson/create" type="button" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create lesson
+          </a>
+          <a href="/admin/lesson" type="button" class="btn btn-info">
+            <i class="fas fa-redo"></i> Refresh
+          </a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <table id="table-blog" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>Tên</th>
+                  <th>Mô tả</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày tạo</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="lesson : ${lessonList}">
+                  <td>
+                    <a th:href="@{/admin/lesson/{id}/detail (id=${lesson.getLessonCode()})}"
+                       th:text="${lesson.lessonTitle}"></a>
+                  </td>
+                  <td th:text="${lesson.description}">Mô tả</td>
+                  <td th:text="${lesson.status ? 'Công khai' : 'Nháp'}">Công khai</td>
+                  <td th:text="${#temporals.format(lesson.createdAt, 'dd/MM/yyyy')}">09/01/2024</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<th:block id="js">
+  <script th:inline="javascript">
+    $('#table-blog').DataTable({
+      "paging": true,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  </script>
+</th:block>
+</body>
+
+</html>

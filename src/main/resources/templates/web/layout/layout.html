@@ -31,13 +31,13 @@
 <body>
 
 <!-- Header -->
+<div class="background-flag"></div>
 <th:block th:replace="~{web/fragments/header :: header}"></th:block>
-
 <!-- Content -->
 <th:block th:replace="${content}"></th:block>
 
 <!-- Footer -->
-<th:block th:replace="~{web/fragments/footer :: footer}"></th:block>
+
 
 <!-- jQuery mới nhất -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"
@@ -62,8 +62,7 @@
 
 <!-- Các file JS của dự án -->
 <script src="/web/js/common.js"></script>
-<script src="/web/js/data.json"></script>
-<script src="/web/js/api.js"></script>
+
 
 <th:block th:replace="${js}"></th:block>
 

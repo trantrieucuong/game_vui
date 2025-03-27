@@ -24,7 +24,7 @@
                         <div class="d-flex align-items-center image">
                             <span th:text="${session.currentUser.name}">Admin</span>
                             <img th:src="${session.currentUser.avatar}" class="user-avatar-large" alt="User Image"
-                                 onerror="this.onerror=null; this.src='/img/logodji.png';">
+                                 onerror="this.onerror=null; this.src='/img/logo.png';">
                         </div>
                     </div>
                 </a>
@@ -56,26 +56,16 @@
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false" id="main-menu">
                     <li class="nav-item">
                         <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-recycle"></i>
+                            <i class="nav-icon fas fa-chart-pie"></i>
                             <p>
-                                Bài viết
+                                Dashboard
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="/admin/blogs" class="nav-link pl-5">
-                                    <p>Tất cả bài viết</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/admin/blogs/own-blogs" class="nav-link pl-5">
-                                    <p>Bài viết của tôi</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/admin/blogs/create" class="nav-link pl-5">
-                                    <p>Tạo bài viết</p>
+                                <a href="/admin/dashboard" class="nav-link pl-5">
+                                    <p>Dashboard</p>
                                 </a>
                             </li>
                         </ul>
@@ -84,20 +74,24 @@
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-recycle"></i>
                             <p>
-                                Role Bài Viết
+                                Lesson
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="/admin/blog-roles" class="nav-link pl-5">
-                                    <p>Tất cả Role Bài Viết</p>
+                                <a href="/admin/lesson" class="nav-link pl-5">
+                                    <p>lesson</p>
                                 </a>
                             </li>
-
                             <li class="nav-item">
-                                <a href="/admin/blog-roles/create" class="nav-link pl-5">
-                                    <p>Tạo Role Bài Viết</p>
+                                <a href="" class="nav-link pl-5">
+                                    <p>Thêm lesson</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="" class="nav-link pl-5">
+                                    <p>Thêm Video</p>
                                 </a>
                             </li>
                         </ul>

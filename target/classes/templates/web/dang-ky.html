@@ -37,34 +37,9 @@
                             </div>
                             <div class="mb-3">
                                 <div class="mb-3">
-                                    <label for="province" class="form-label">Tỉnh/Thành phố</label>
-                                    <select name="province" id="province" class="form-select">
-                                        <option value="-1">Chọn tỉnh/thành phố</option>
-                                        <!-- Thêm các tỉnh/thành phố vào đây -->
-                                    </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="district" class="form-label">Quận/Huyện</label>
-                                    <select name="district" id="district" class="form-select">
-                                        <option value="-1">Chọn quận/huyện</option>
-                                        <!-- Thêm các quận/huyện vào đây -->
-                                    </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="town" class="form-label">Phường/Xã</label>
-                                    <select name="town" id="town" class="form-select">
-                                        <option value="-1">Chọn phường/xã</option>
-                                        <!-- Thêm các phường/xã vào đây -->
-                                    </select>
-                                </div>
-
-                                <div class="mb-3">
                                     <label for="address" class="form-label">Địa chỉ cụ thể</label>
                                     <input type="text" name="address" class="form-control" id="address" placeholder="Nhập địa chỉ cụ thể">
                                 </div>
-
                             </div>
                             <div class="mb-3">
                                 <button type="submit" class="btn btn-primary px-5">Đăng ký</button>
@@ -140,9 +115,6 @@
                 email: emailEl.value,
                 password: document.getElementById('password').value,
                 confirmPassword: document.getElementById('confirmPassword').value,
-                province: document.getElementById('province').value,
-                district: document.getElementById('district').value,
-                town: document.getElementById('town').value,
                 address: document.getElementById('address').value,
                 sdt: document.getElementById('sdt').value
             };
