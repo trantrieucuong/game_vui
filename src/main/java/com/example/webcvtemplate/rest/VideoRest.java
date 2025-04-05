@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/videos")
@@ -42,10 +43,11 @@ public class VideoRest {
         }
     }
     @PutMapping("/{videoCode}")
-    public ResponseEntity<Video> updateVideo(
+    public ResponseEntity<Video> updateVideoTitle(
             @PathVariable String videoCode,
-            @RequestBody VideoRequest request) {
-        return ResponseEntity.ok(videoService.updateVideo(videoCode, request));
+            @RequestBody Map<String, String> request) {
+
+        return ResponseEntity.ok(videoService.updateVideoTitle(videoCode, request.get("videoTitle")));
     }
 
     @DeleteMapping("/{videoCode}")

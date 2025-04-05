@@ -49,5 +49,18 @@ public class LessonController {
             return "admin/error";
         }
     }
+    @GetMapping("/{videoCode}/detailvideo")
+    public String getVideoDetailPage(@PathVariable String videoCode, Model model) {
+        Video video = videoService.getVideoByVideoCode(videoCode);
+        if (video != null) {
+            model.addAttribute("video", video);
+            model.addAttribute("videoCode", videoCode);
+            model.addAttribute("questionVideos", video.getQuestionVideos()); // Lấy danh sách câu hỏi
+            return "admin/lesson/detailvideo";
+        } else {
+            return "admin/error";
+        }
+    }
+
 
 }

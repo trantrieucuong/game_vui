@@ -132,6 +132,14 @@ public class VideoService {
         return videoRepository.save(video);
     }
 
+    public Video updateVideoTitle(String videoCode, String videoTitle) {
+        Video video = videoRepository.findById(videoCode)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy video"));
+
+        video.setVideoTitle(videoTitle);
+        return videoRepository.save(video);
+    }
+
     // Xóa video
     public void deleteVideo(String videoCode) {
         Video video = videoRepository.findById(videoCode)
