@@ -111,9 +111,11 @@
                               <td><a th:href="${video.videoUrl}" target="_blank">Xem video</a></td>
                               <td th:text="${video.durationMinutes}"></td>
                               <td>
-                                <button type="button" class="btn btn-warning btn-update-video">
+                                <button type="button" class="btn btn-warning btn-update-video"
+                                        th:attr="onclick=|window.location.href='/admin/lesson/${video.videoCode}/detailvideo'|">
                                   <i class="fas fa-edit"></i> Cập nhật
                                 </button>
+
                               </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(videos)}">

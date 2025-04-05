@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{admin/layout/layout :: layout(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title th:text="${video.videoTitle}">Chi tiết bài học</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/admin-lte/plugins/select2/css/select2.min.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-assets/assets/css/style.css}">
+    </th:block>
+    <th:block id="css">
+        <style>
+            .video-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                max-width: 300px;
+                width: 100%;
+                margin: 0 auto;
+            }
+
+            .video-player {
+                width: 100%;
+                max-width: 300px;
+                max-height: 180px;
+                border-radius: 10px;
+                object-fit: cover;
+            }
+        </style>
+    </th:block>
+
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/admin/dashboard">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="/admin/lesson">Danh sách bài học</a>
+                        </li>
+                        <li class="breadcrumb-item active" th:text="${video.videoTitle}">
+                            Chi tiết video
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <a href="/admin/lesson" class="btn btn-default">
+                        <i class="fas fa-chevron-left"></i> Quay lại
+                    </a>
+                    <button type="button" class="btn btn-info px-4" id="btn-update">
+                        Cập nhật
+                    </button>
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                    <button type="button" class="btn btn-danger px-4" id="btn-delete">
+                        Xóa
+                    </button>
+                </div>
+            </div>
+
+            <div class="container mt-4">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label>Mã Video</label>
+                            <input type="text" class="form-control" id="videoCode" name="videoCode"
+                                   th:value="${video.videoCode}" readonly/>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tiêu đề Video</label>
+                            <input type="text" class="form-control" id="videoTitle" name="videoTitle"
+                                   th:value="${video.videoTitle}"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Đường dẫn Video</label>
+                            <div class="video-container">
+                                <video class="video-player" controls>
+                                    <source th:src="${video.videoUrl}" type="video/mp4">
+                                    Trình duyệt của bạn không hỗ trợ video.
+                                </video>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="form-group">
+                            <label>Thời lượng (Giây)</label>
+                            <input type="number" class="form-control" id="durationMinutes" name="durationMinutes"
+                                   th:value="${video.durationMinutes}" readonly/>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Thuộc bài học</label>
+                            <input type="text" class="form-control" id="lessonTitle" name="lessonTitle"
+                                   th:value="${video.lesson.lessonTitle}" readonly/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row py-2">
+                    <button type="button" class="btn btn-success px-4" id="btn-add-question">
+                        <i class="fas fa-plus"></i> Thêm Bộ Câu Hỏi
+                    </button>
+                    <button type="button" class="btn btn-primary px-4" id="btn-download-csv">
+                        <a class="fas fa-file-download"></a> Tải CSV Mẫu
+                    </button>
+                    <input type="file" id="csvFile" accept=".csv" style="display: none;">
+                    <button type="button" class="btn btn-warning px-4" id="btn-upload-csv">
+                        <i class="fas fa-upload"></i> Tải lên CSV
+                    </button>
+                </div>
+
+
+                <label>Danh sách câu hỏi</label>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nội dung câu hỏi</th>
+                        <th>Đáp án A</th>
+                        <th>Đáp án B</th>
+                        <th>Đáp án C</th>
+                        <th>Đáp án D/th>
+                        <th>Đáp án đúng</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="question, iterStat : ${video.questionVideos}">
+                        <td th:text="${iterStat.count}"></td>
+                        <td th:text="${question.content}"></td>
+                        <td th:text="${question.getOptionA()}"></td>
+                        <td th:text="${question.getOptionB()}"></td>
+                        <td th:text="${question.getOptionC()}"></td>
+                        <td th:text="${question.getOptionD()}"></td>
+                        <td th:text="${question.correctOption}"></td>
+                        <td>
+
+                            <button class="btn btn-sm btn-danger">Xóa</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </section>
+</div>
+
+<th:block id="js">
+    <script th:src="@{/admin-assets/admin-lte/plugins/summernote/summernote-bs4.min.js}"></script>
+    <script th:src="@{/admin-assets/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
+    <script th:inline="javascript">
+
+        $(document).ready(function () {
+            $("#btn-update").click(function () {
+                let videoCode = $("#videoCode").val(); // Lấy mã video
+                let videoTitle = $("#videoTitle").val(); // Lấy tiêu đề mới
+
+                if (!videoTitle.trim()) {
+                    alert("Tiêu đề không được để trống!");
+                    return;
+                }
+
+                $.ajax({
+                    url: "/api/videos/" + videoCode,
+                    type: "PUT",
+                    contentType: "application/json",
+                    data: JSON.stringify({videoTitle: videoTitle}),
+                    success: function (response) {
+                        alert("Cập nhật thành công!");
+                        location.reload(); // Tải lại trang sau khi cập nhật
+                    },
+                    error: function (xhr) {
+                        alert("Lỗi cập nhật: " + xhr.responseText);
+                    }
+                });
+            });
+        });
+        document.getElementById("btn-download-csv").addEventListener("click", function () {
+            let videoCode = document.getElementById("videoCode").value; // Lấy mã video
+
+            if (!videoCode) {
+                alert("Không tìm thấy mã video!");
+                return;
+            }
+
+            const url = `/api/questions/download-csv-template?video_code=${encodeURIComponent(videoCode)}`; // Gắn tham số vào URL
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "question_template.csv"; // Tên file khi tải về
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+        document.getElementById("btn-upload-csv").addEventListener("click", function () {
+            let videoCode = document.getElementById("videoCode").value;
+            let fileInput = document.getElementById("csvFile");
+
+            if (!videoCode) {
+                alert("Không tìm thấy mã video!");
+                return;
+            }
+
+            // Kích hoạt chọn file
+            fileInput.click();
+
+            fileInput.addEventListener("change", function () {
+                let file = fileInput.files[0];
+
+                if (!file) {
+                    alert("Vui lòng chọn file CSV!");
+                    return;
+                }
+
+                let formData = new FormData();
+                formData.append("file", file);
+                formData.append("videoCode", videoCode);
+
+                fetch("/api/questions/upload-csv", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        location.reload();
+                    })
+                    .catch(error => {
+                        alert("Lỗi khi tải lên CSV: " + error);
+                    });
+            });
+        });
+
+
+    </script>
+
+
+
+</th:block>
+
+</body>
+</html>

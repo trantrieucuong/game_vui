@@ -335,3 +335,20 @@ button{
     /*width: 10px;*/
     /*height: 10px;*/
 }
+
+.video-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Đảm bảo không bị tràn */
+    max-width: 300px; /* Giới hạn kích thước tối đa */
+}
+
+.video-player {
+    width: 100%;
+    max-width: 300px; /* Giữ video không quá to */
+    max-height: 180px; /* Giới hạn chiều cao */
+    border-radius: 10px; /* Bo góc */
+    object-fit: cover; /* Cắt gọn nội dung video nếu cần */
+}
+
