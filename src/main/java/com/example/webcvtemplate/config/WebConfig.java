@@ -15,7 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authenticationInterceptor)
-                .addPathPatterns("/api/reviews/**")
+                .addPathPatterns("/api/reviews/**,/submit-answer")
                 .excludePathPatterns("/chat");
 
         // Interceptor kiểm tra quyền truy cập admin
@@ -35,6 +35,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/admin-assets/");
 
     }
+
 
 
 

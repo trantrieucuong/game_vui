@@ -44,31 +44,33 @@
             e.preventDefault();
 
             // Check validate
-
             const data = {
                 email: emailEl.value,
                 password: passwordEl.value
             }
 
-            // Call api sử dụng axios
+            // Call API sử dụng axios
             axios.post('/api/auth/login', data)
                 .then((response) => {
                     console.log(response);
                     if (response.status === 200) {
                         toastr.success('Đăng nhập thành công');
+                        // Lấy URL chuyển hướng từ response và thực hiện chuyển hướng
+                        const redirectUrl = response.data.redirectUrl || '/';  // Nếu không có redirectUrl, mặc định chuyển đến '/'
                         setTimeout(() => {
-                            window.location.href = '/';
-                        }, 1500)
+                            window.location.href = redirectUrl;  // Chuyển hướng đến URL nhận được từ server
+                        }, 1500);
                     } else {
                         toastr.error('Đăng nhập thất bại');
                     }
                 })
                 .catch((error) => {
                     console.log(error);
-                    toastr.error(error.response.data.message);
-                })
-        })
+                    toastr.error(error.response.data.message || 'Có lỗi xảy ra');
+                });
+        });
     </script>
+
 </th:block>
 </body>
 </html>

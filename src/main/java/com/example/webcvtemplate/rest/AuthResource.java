@@ -6,6 +6,7 @@ import com.example.webcvtemplate.model.request.RegisterRequest;
 import com.example.webcvtemplate.service.AuthService;
 import com.example.webcvtemplate.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 
@@ -25,7 +26,7 @@ public class AuthResource {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) throws BadRequestException {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpSession session) throws BadRequestException {
 
         // Kiểm tra xem email và password có hợp lệ không
         if (request.getEmail() == null || request.getPassword() == null) {
@@ -48,12 +49,16 @@ public class AuthResource {
             ));
         }
 
+        // Lưu thông tin người dùng vào session
+        session.setAttribute("currentUser", user);
 
+        // Trả về thông báo và URL chuyển hướng
         return ResponseEntity.ok(Map.of(
                 "message", "Đăng nhập thành công",
-                "user", user
+                "redirectUrl", "/starst"  // URL để chuyển hướng sau khi đăng nhập
         ));
     }
+
 
 
 

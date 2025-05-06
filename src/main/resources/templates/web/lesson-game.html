@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${lesson.lessonTitle}">Lesson Game</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .fullscreen-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
+
+        .question-section {
+            display: none;
+            background: white;
+            color: black;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .result-area {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: green;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 8px 16px;
+            font-size: 16px;
+        }
+
+        label {
+            display: block;
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- VIDEO -->
+<div th:each="video : ${videos}">
+    <video class="fullscreen-video" controls autoplay
+           th:src="@{${video.videoUrl}}"
+           onended="showQuestions()">
+    </video>
+
+    <!-- FORM CÂU HỎI -->
+    <div class="question-section" id="questionArea">
+        <form id="quizForm">
+            <input type="hidden" name="videoCode" th:value="${video.videoCode}" />
+            <div th:each="q : ${video.questionVideos}">
+                <p th:text="${q.content}"></p>
+                <label><input type="radio" th:name="'answers[' + ${q.questionCode} + ']'" value="A"/> [[${q.optionA}]]</label>
+                <label><input type="radio" th:name="'answers[' + ${q.questionCode} + ']'" value="B"/> [[${q.optionB}]]</label>
+                <label><input type="radio" th:name="'answers[' + ${q.questionCode} + ']'" value="C"/> [[${q.optionC}]]</label>
+                <label><input type="radio" th:name="'answers[' + ${q.questionCode} + ']'" value="D"/> [[${q.optionD}]]</label>
+                <br><br>
+            </div>
+            <button type="submit">Gửi bài</button>
+        </form>
+
+        <div id="resultArea" class="result-area"></div>
+    </div>
+</div>
+
+<!-- SCRIPT -->
+<script>
+    // Khi video kết thúc, ẩn video và hiện phần câu hỏi
+    function showQuestions() {
+        document.querySelector('.fullscreen-video').style.display = 'none';
+        document.getElementById('questionArea').style.display = 'block';
+    }
+
+    // Gửi bài làm khi ấn nút "Gửi bài"
+    document.addEventListener('DOMContentLoaded', function () {
+        const quizForm = document.getElementById('quizForm');
+        const resultArea = document.getElementById('resultArea');
+
+        if (!quizForm) return;
+
+        quizForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(quizForm);
+            const params = new URLSearchParams(formData);
+
+            try {
+                const response = await fetch('/api/questions/submit-answer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: params
+                });
+
+                const result = await response.json();
+
+                // Nếu chưa đăng nhập → Chuyển hướng đến trang đăng nhập
+                if (result.status === 'unauthorized' && result.redirect) {
+                    window.location.href = result.redirect;
+                    return;
+                }
+
+                // Nếu thành công → Hiển thị kết quả
+                if (result.status === 'success') {
+                    resultArea.innerHTML = `
+                        <div>
+                            <p><strong>Kết quả:</strong> ${result.correct} / ${result.total} câu đúng</p>
+                        </div>`;
+                } else {
+                    resultArea.innerHTML = `
+                        <div style="color: red;">
+                            ${result.message || 'Đã xảy ra lỗi.'}
+                        </div>`;
+                }
+            } catch (error) {
+                console.error('Lỗi kết nối:', error);
+                resultArea.innerHTML = `
+                    <div style="color: red;">
+                        Lỗi kết nối tới server. Vui lòng thử lại.
+                    </div>`;
+            }
+        });
+    });
+</script>
+
+
+
+
+</body>
+</html>
