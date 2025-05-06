@@ -7,4 +7,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface QuestionRepository extends JpaRepository<QuestionVideo, String> {
     List<QuestionVideo> findByVideo_VideoCode(String questionCode);
+    QuestionVideo findByQuestionCode(String questionCode);
+
+
+
 }

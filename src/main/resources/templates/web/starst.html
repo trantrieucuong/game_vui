@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>VietNam1975</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: monospace;
+            font-size: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            text-align: center;
+            padding: 30px;
+        }
+
+        #text {
+            white-space: pre-wrap;
+            overflow: hidden;
+            border-right: .15em solid orange;
+            max-width: 90vw;
+        }
+
+        video {
+            margin-top: 20px;
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+<div id="text"></div>
+
+<video id="video1">
+    <source src="/video/1975.mp4" type="video/mp4">
+    Trình duyệt của bạn không hỗ trợ video.
+</video>
+<video id="video2">
+    <source src="/video/camco.mp4" type="video/mp4">
+    Trình duyệt của bạn không hỗ trợ video.
+</video>
+
+<script>
+    const textEl = document.getElementById("text");
+    const video1 = document.getElementById("video1");
+    const video2 = document.getElementById("video2");
+
+    const content1 = "ấn space để đâm đổ cổng dinh độc lập";
+    const content2 = "thiếu cắm cờ rồi, ấn space để cắm cờ";
+    const finalText = "Các bạn vừa được trải qua 2 sự kiện trọng đại của Việt Nam thống nhất lãnh thổ.";
+    const introText = `🇻🇳 LỜI MỞ ĐẦU
+"Lịch sử là tiếng vọng thiêng liêng của quá khứ, là ngọn lửa thắp sáng lòng yêu nước trong tim mỗi người con đất Việt."
+
+Chào mừng bạn đến với “Việt Nam 1975”, một hành trình tái hiện lại khoảnh khắc hào hùng của dân tộc trong công cuộc giải phóng hoàn toàn miền Nam, thống nhất đất nước.
+
+Được sáng tạo bởi Trần Triệu Cường, tựa game không chỉ là một trò chơi – mà còn là lời tri ân, là niềm kiêu hãnh gửi đến hàng triệu trái tim Việt Nam – những con người đã hy sinh, đã đấu tranh không mỏi mệt để bảo vệ từng tấc đất, từng dòng sông, từng mái nhà yêu dấu.
+
+Bạn sẽ hóa thân vào những chiến sĩ kiên cường, từng bước phá tan những rào cản, tiến vào Dinh Độc Lập, cắm lá cờ chiến thắng lên nóc dinh – biểu tượng cho một Việt Nam không còn chia cắt.
+
+🌾 Đây không chỉ là trò chơi – mà là một lời nhắc nhở về cội nguồn, là ngọn lửa truyền lửa cho thế hệ hôm nay và mai sau.
+
+Bạn đã sẵn sàng chưa?
+Ấn “Space” để bước vào trang sử vàng của dân tộc!`;
+
+    let phase = 0;
+
+    function typeText(content, callback) {
+        textEl.textContent = "";
+        let idx = 0;
+        function typeChar() {
+            if (idx < content.length) {
+                textEl.textContent += content.charAt(idx);
+                idx++;
+                setTimeout(typeChar, 40);
+            } else if (callback) {
+                callback();
+            }
+        }
+        typeChar();
+    }
+
+    // Bắt đầu với content1
+    typeText(content1);
+
+    document.addEventListener("keydown", function (e) {
+        if (e.code === "Space") {
+            e.preventDefault();
+            if (phase === 0) {
+                textEl.style.display = "none";
+                video1.style.display = "block";
+                video1.play();
+                phase = 1;
+            } else if (phase === 2) {
+                textEl.style.display = "none";
+                video2.style.display = "block";
+                video2.play();
+                phase = 3;
+            } else if (phase === 4) {
+                typeText(introText);
+                phase = 5;
+            } else if (phase === 5) {
+                window.location.href = "/thele";
+            }
+        }
+    });
+
+    video1.addEventListener("ended", function () {
+        video1.style.display = "none";
+        textEl.style.display = "block";
+        typeText(content2);
+        phase = 2;
+    });
+
+    video2.addEventListener("ended", function () {
+        video2.style.display = "none";
+        textEl.style.display = "block";
+        typeText(finalText);
+        phase = 4;
+    });
+</script>
+</body>
+</html>

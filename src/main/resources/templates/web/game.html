@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách Bài học</title>
+    <link rel="stylesheet" href="/web/css/style.css"/>
+</head>
+<body>
+<div class="background-flag"></div>
+<!-- Tiêu đề -->
+<h2 class="lesson-title-heading">Danh sách Bài học</h2>
+
+<!-- Hiển thị danh sách bài học -->
+<!-- Hiển thị danh sách bài học -->
+<div class="lesson-title-list">
+    <ul>
+        <!-- Lặp qua từng bài học -->
+        <li th:each="lesson, stat : ${lessons}" class="lesson-title-item">
+            <p>
+                <span th:text="'Bài ' + ${stat.index + 1} + ': '"></span>
+                <a class="lesson-link" th:href="@{'/game/lesson/' + ${lesson.lessonCode}}" th:text="${lesson.lessonTitle}"></a>
+            </p>
+        </li>
+    </ul>
+</div>
+
+
+</body>
+</html>

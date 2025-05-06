@@ -31,6 +31,18 @@ public class QuestionService {
     @Autowired
     private VideoRepository videoRepository;
 
+
+    // Kiểm tra câu trả lời đúng hay sai
+    public boolean checkAnswer(String questionIndex, String answer) {
+        // Tìm câu hỏi theo questionIndex (là String)
+        QuestionVideo questionVideo = questionRepository.findById(questionIndex)
+                .orElseThrow(() -> new IllegalArgumentException("Câu hỏi không tồn tại"));
+
+        // Kiểm tra câu trả lời
+        return questionVideo.getCorrectOption() == answer.charAt(0);
+    }
+
+
     // Lấy tất cả câu hỏi
     public List<QuestionVideo> getAllQuestions() {
         return questionRepository.findAll();
@@ -39,6 +51,10 @@ public class QuestionService {
     // Lấy câu hỏi theo mã
     public Optional<QuestionVideo> getQuestionById(String questionCode) {
         return questionRepository.findById(questionCode);
+    }
+
+    public List<QuestionVideo> getQuestionsByVideoCode(String videoCode) {
+        return questionRepository.findByVideo_VideoCode(videoCode);
     }
 
     // 🆕 Sinh mã tự động

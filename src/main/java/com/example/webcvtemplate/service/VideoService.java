@@ -37,6 +37,8 @@ public class VideoService {
         return videoRepository.findAll();
     }
 
+
+
     // Lấy video theo mã
     public Video getVideoByVideoCode(String videoCode) {
         return videoRepository.findById(videoCode)

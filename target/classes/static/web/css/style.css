@@ -77,119 +77,317 @@ video {
     border: 5px solid red;
 }
 
-
-
-
-
-/* Video Wrapper */
-.video-wrapper {
-    width: 100%;
-    height: 100vh;
+/* Danh sách trò chơi */
+.game-container {
     display: flex;
-    justify-content: center;
+    justify-content: center; /* Căn giữa tất cả các phần tử */
     align-items: center;
-    background-color: transparent;
+    height: 100vh; /* Chiếm hết chiều cao của màn hình */
 }
 
-/* Ẩn video 2 ban đầu */
-#video2-container {
-    display: none;
+.game-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Xếp thành 2 cột */
+    gap: 20px; /* Khoảng cách giữa các thẻ */
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    justify-items: center; /* Căn giữa các item */
+    text-align: center;
 }
 
-/* Nút đăng nhập */
-#login-btn {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    background: transparent;
-    border: none;
+.game-item {
+    width: 200px;
+    height: 200px;
+    background-size: cover; /* Đảm bảo ảnh bao phủ toàn bộ thẻ */
+    background-position: center; /* Căn giữa ảnh */
+    display: flex;
+    flex-direction: column; /* Đặt tên trò chơi dưới ảnh */
+    justify-content: flex-end; /* Căn dưới cùng cho tên trò chơi */
+    align-items: center;
     color: white;
-    font-weight: 600;
-    text-decoration: underline;
-    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-
-/* ================= MEDIA QUERIES ================= */
-
-/* Tablet */
-@media (max-width: 768px) {
-    video {
-        width: 90vw; /* Chiếm 90% chiều rộng */
-        max-height: 60vh; /* Giới hạn chiều cao */
-    }
-
-    #login-btn {
-        font-size: 18px;
-        bottom: 20px;
-    }
+.game-name {
+    background-color: rgba(0, 0, 0, 0.6); /* Nền bán trong cho chữ */
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Tạo hiệu ứng đổ bóng cho chữ */
 }
 
-/* Điện thoại */
-@media (max-width: 480px) {
-    video {
-        width: 100vw; /* Full màn hình ngang */
-        max-height: 50vh; /* Giữ video nhỏ gọn hơn */
-    }
-
-    #login-btn {
-        font-size: 16px;
-        bottom: 15px;
-    }
+/* Hover effect */
+.game-item:hover {
+    transform: scale(1.05); /* Phóng to nhẹ */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25); /* Thêm bóng đổ */
 }
 
-/* Desktop lớn */
-@media (min-width: 1200px) {
-    video {
-        width: 60vw; /* Nhỏ hơn trên màn hình lớn */
-        max-height: 75vh;
-    }
-
-    #login-btn {
-        font-size: 24px;
-        bottom: 40px;
-    }
+/* Khi trò chơi được chọn (active) */
+.game-item.active {
+    border: 3px solid yellow; /* Thêm viền khi chọn */
 }
 
-
-/*header*/
-/* Căn chỉnh thanh navbar */
-.navbar {
-    position: relative; /* Định vị relative để phần tử con absolute dựa vào */
-    display: flex;
-    justify-content: flex-end; /* Đẩy user-info sang phải */
-    align-items: center;
-    padding: 10px 20px;
-    height: 60px;
-}
-
-/* Chữ "Lịch sử Việt Nam" luôn ở giữa màn hình */
-.history-title {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%); /* Căn giữa theo trục X */
-    color: yellow;
+/* Tiêu đề */
+.game-title {
+    text-align: center;
     font-size: 32px;
     font-weight: bold;
-    font-family: 'Georgia', serif;
-    text-transform: uppercase;
+    margin-bottom: 20px;
 }
 
-/* Link Đăng nhập góc phải */
-.user-info {
-    margin-left: auto; /* Đẩy về phía bên phải */
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 768px) {
+    .game-list {
+        grid-template-columns: repeat(2, 1fr); /* Xếp thành 2 cột trên màn hình nhỏ */
+    }
 }
 
-.login-link {
-    color: white;
-    font-size: 18px;
+/* Responsive cho điện thoại */
+@media (max-width: 480px) {
+    .game-list {
+        grid-template-columns: 1fr; /* Xếp thành 1 cột trên điện thoại */
+    }
+
+    .game-item {
+        width: 150px; /* Thu nhỏ thẻ trò chơi trên điện thoại */
+        height: 150px; /* Thu nhỏ thẻ trò chơi trên điện thoại */
+    }
+}
+
+
+
+    /* Video Wrapper */
+    .video-wrapper {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: transparent;
+    }
+
+    /* Ẩn video 2 ban đầu */
+    #video2-container {
+        display: none;
+    }
+
+    /* Nút đăng nhập */
+    #login-btn {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        background: transparent;
+        border: none;
+        color: white;
+        font-weight: 600;
+        text-decoration: underline;
+        font-size: 22px;
+    }
+
+
+    /* ================= MEDIA QUERIES ================= */
+    /* Tablet */
+    @media (max-width: 768px) {
+        video {
+            width: 90vw; /* Chiếm 90% chiều rộng */
+            max-height: 60vh; /* Giới hạn chiều cao */
+        }
+
+        #login-btn {
+            font-size: 18px;
+            bottom: 20px;
+        }
+    }
+
+    /* Điện thoại */
+    @media (max-width: 480px) {
+        video {
+            width: 100vw; /* Full màn hình ngang */
+            max-height: 50vh; /* Giữ video nhỏ gọn hơn */
+        }
+
+        #login-btn {
+            font-size: 16px;
+            bottom: 15px;
+        }
+    }
+
+    /* Desktop lớn */
+    @media (min-width: 1200px) {
+        video {
+            width: 60vw; /* Nhỏ hơn trên màn hình lớn */
+            max-height: 75vh;
+        }
+
+        #login-btn {
+            font-size: 24px;
+            bottom: 40px;
+        }
+    }
+
+
+    /*header*/
+    /* Căn chỉnh thanh navbar */
+    .navbar {
+        position: relative; /* Định vị relative để phần tử con absolute dựa vào */
+        display: flex;
+        justify-content: flex-end; /* Đẩy user-info sang phải */
+        align-items: center;
+        padding: 10px 20px;
+        height: 60px;
+    }
+
+    /* Chữ "Lịch sử Việt Nam" luôn ở giữa màn hình */
+    .history-title {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%); /* Căn giữa theo trục X */
+        color: yellow;
+        font-size: 32px;
+        font-weight: bold;
+        font-family: 'Georgia', serif;
+        text-transform: uppercase;
+    }
+
+    /* Link Đăng nhập góc phải */
+    .user-info {
+        margin-left: auto; /* Đẩy về phía bên phải */
+    }
+
+    .login-link {
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        text-decoration: none;
+        padding: 10px 15px;
+    }
+
+    .login-link:hover {
+        color: #FFD700;
+    }
+
+    .game-title {
+        margin-top: 20px;
+        color: #fff;
+        text-align: center;
+        font-size: 28px;
+    }
+
+    .game-list {
+        list-style-type: none;
+        padding-left: 0;
+        width: 80%;
+        max-width: 800px;
+    }
+
+    .game-item {
+        margin: 15px 0;
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.7);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        color: white;
+        font-size: 20px;
+    }
+
+    .game-item:hover {
+        background-color: #555;
+    }
+
+    .game-item.active {
+        background-color: #00FF00; /* Khi trò chơi được chọn */
+    }
+
+
+/* Tiêu đề bài học */
+.lesson-title-heading {
+    text-align: center;
+    font-size: 36px;
+    color: yellow;
+    margin-top: 40px;
     font-weight: bold;
-    text-decoration: none;
-    padding: 10px 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
 }
 
-.login-link:hover {
-    color: #FFD700;
+/* Danh sách bài học */
+.lesson-title-list {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.lesson-title-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 80%;
+    max-width: 800px;
+}
+
+.lesson-title-item {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 20px;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+    text-align: center;
+}
+
+.lesson-title-item:hover {
+    transform: translateY(-5px);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.lesson-title-list {
+    padding: 20px;
+}
+
+.lesson-title-item {
+    text-align: left; /* Căn lề trái */
+    margin-bottom: 10px;
+}
+
+.lesson-index {
+    font-weight: bold;
+    margin-right: 8px;
+    color: #ffcc00;
+}
+
+.lesson-title {
+    color: white;
+}
+.lesson-link {
+    font-size: 20px;
+    text-decoration: none;   /* Bỏ gạch chân */
+    color: #ffffff;            /* Màu chữ bình thường */
+}
+
+.lesson-link:hover {
+    color: #ffffff;            /* Giữ nguyên màu khi hover */
+    text-decoration: none;   /* Không gạch chân khi hover */
+}
+
+
+/* Responsive cho điện thoại */
+@media (max-width: 600px) {
+    .lesson-title-heading {
+        font-size: 28px;
+        margin-top: 30px;
+    }
+
+    .lesson-title-item {
+        font-size: 16px;
+        padding: 10px;
+    }
 }

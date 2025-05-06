@@ -39,6 +39,8 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query("UPDATE User u SET u.otp = :otp WHERE u.email = :email")
     void updateOtp(@Param("email") String email, @Param("otp") String otp);
 
+    User findByName(String name);
+
 
 
 

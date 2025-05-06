@@ -46,7 +46,9 @@ public class User {
     private LocalDateTime otpExpiry;
 
     @Column(nullable = false)
-    private Boolean isVerified = Boolean.FALSE; // Đặt giá trị mặc định là false
+    private Boolean isVerified = Boolean.FALSE;
+    // Đặt giá trị mặc định là false
+
 
 
 

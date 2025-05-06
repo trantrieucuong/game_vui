@@ -1,6 +1,9 @@
 package com.example.webcvtemplate.controller;
 
+import com.example.webcvtemplate.entity.Lesson;
+import com.example.webcvtemplate.entity.QuestionVideo;
 import com.example.webcvtemplate.entity.User;
+import com.example.webcvtemplate.entity.Video;
 import com.example.webcvtemplate.exception.ResourceNotFoundException;
 import com.example.webcvtemplate.model.request.UpsertReviewRequest;
 import com.example.webcvtemplate.model.responser.ChatRequest;
@@ -30,6 +33,9 @@ public class webController {
     private final GeminiService geminiService;
 
     private final UserService userService;
+    private final VideoService videoService;
+    private final QuestionService questionVideoService;
+    private final LessonService lessonService;
 
 
 
@@ -40,10 +46,86 @@ public class webController {
     public String getHomePage(Model model) {
         return "web/index";
     }
-    @GetMapping("/trangchu")
-    public String getHomePageGame(Model model) {
-        return "web/index";
+    @GetMapping("/starst")
+    public String getHomePage(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("currentUser");
+        if (user != null) {
+            return "web/starst";  // Trả về trang chủ nếu đã đăng nhập
+        }
+        return "redirect:/dang-nhap";  // Chuyển hướng đến trang đăng nhập nếu chưa đăng nhập
     }
+    @GetMapping("/thele")
+    public String getHomePageThele(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("currentUser");
+        if (user != null) {
+            // Lấy danh sách bài học từ database (Giả sử bạn có một service để lấy lesson)
+            List<Lesson> lessons = lessonService.getAllLessons();  // Lấy tất cả bài học
+
+            if (!lessons.isEmpty()) {
+                // Lấy lessonCode của bài học đầu tiên (ví dụ 'history101')
+                String lessonCode = lessons.get(0).getLessonCode();  // Giả sử getLessonCode() trả về mã bài học
+                model.addAttribute("lessonCode", lessonCode);  // Gán lessonCode vào model
+            }
+
+            // Trả về trang thể lệ với lessonCode đã gán
+            return "web/thele";
+        }
+
+        // Chuyển hướng đến trang đăng nhập nếu người dùng chưa đăng nhập
+        return "redirect:/dang-nhap";
+    }
+
+    @GetMapping("/game")
+    public String getAllLessons(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("currentUser");
+        if (user == null) {
+            return "redirect:/dang-nhap";
+        }
+
+        List<Lesson> lessons = lessonService.getAllLessons();
+        model.addAttribute("lessons", lessons);
+        model.addAttribute("user", user); // nếu cần dùng trong view
+
+        return "web/game";
+    }
+
+    @GetMapping("/game/lesson/{lessonCode}")
+    public String viewGameLesson(@PathVariable String lessonCode, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("currentUser");
+        if (user == null) {
+            return "redirect:/dang-nhap";
+        }
+
+        Lesson lesson = lessonService.getLessonByLessonCode(lessonCode);
+        List<Video> videos = videoService.getVideosByLessonCode(lessonCode);
+        model.addAttribute("lesson", lesson);
+        model.addAttribute("videos", videos);
+        model.addAttribute("user", user); // nếu muốn hiển thị tên người dùng, v.v.
+
+        return "web/lesson-game";
+    }
+
+
+
+//    @GetMapping("/game/{lessonCode}")
+//    public String startGame(@PathVariable("lessonCode") String lessonCode, Model model) {
+//        // Lấy danh sách video theo lessonCode
+//        List<Video> videos = videoService.getVideosByLessonCode(lessonCode);
+//
+//        // Lấy video đầu tiên
+//        Video firstVideo = videos.get(0);
+//
+//        // Lấy câu hỏi của video đầu tiên
+//        List<QuestionVideo> questions = questionVideoService.getQuestionsByVideoCode(firstVideo.getVideoCode());
+//
+//        // Thêm dữ liệu vào model
+//        model.addAttribute("video", firstVideo);
+//        model.addAttribute("questions", questions);
+//
+//        // Trả về trang game
+//        return "web/game";
+//    }
+
 
     @GetMapping("/dang-ky")
     public String getDangKyPage() {
@@ -57,7 +139,7 @@ public class webController {
     public String getDangNhapPage() {
         User user = (User) session.getAttribute("currentUser"); // Lấy thông tin người dùng trong session
         if (user != null) { // Nếu đăng nhập thì chuyển hướng về trang chủ
-            return "redirect:/";
+            return "redirect:/starst";
         }
         return "web/dang-nhap"; // Nếu chưa đăng nhập thì hiển thị trang đăng nhập
     }

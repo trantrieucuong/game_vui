@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface VideoRepository extends JpaRepository<Video, String> {
     List<Video> findByLesson_LessonCode(String lessonCode);
     Optional<Video> findByVideoCode(String videoCode);
+    Video findFirstByVideoCode(String videoCode);
+
 }

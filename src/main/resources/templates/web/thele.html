@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách trò chơi</title>
+    <link rel="stylesheet" href="/web/css/style.css"/>
+</head>
+<body>
+<!-- Nền cờ đỏ sao vàng -->
+<div class="background-flag"></div>
+
+<h2 class="game-title">Danh sách Trò Chơi</h2>
+
+<!-- Danh sách trò chơi -->
+<div class="game-container">
+    <ul class="game-list">
+        <li class="game-item" style="background-image: url('/img/vn4000.jpg');" onclick="selectGame('Việt Nam 4000 năm văn hiến', 'vn4000', this)">
+            <span class="game-name">Việt Nam 4000 năm văn hiến</span>
+        </li>
+        <li class="game-item" style="background-image: url('/img/duoi-hinh.webp');" onclick="selectGame('Đuổi hình bắt chữ', 'duoi-hinh', this)">
+            <span class="game-name">Đuổi hình bắt chữ</span>
+        </li>
+        <li class="game-item" style="background-image: url('/img/nhin-hinh.jpg');" onclick="selectGame('Nhìn hình đoán chữ', 'nhin-hinh', this)">
+            <span class="game-name">Nhìn hình đoán chữ</span>
+        </li>
+        <li class="game-item" style="background-image: url('/img/manhinh.png');" onclick="selectGame('Trò chơi khác', 'game-khac', this)">
+            <span class="game-name">Trò chơi khác</span>
+        </li>
+    </ul>
+</div>
+
+<!-- Input ẩn chứa lessonCode từ Thymeleaf -->
+<input type="hidden" id="lessonCode" th:value="${lessonCode}"/>
+
+<script>
+    // Hàm chọn trò chơi
+    function selectGame(gameName, lessonCode, selectedElement) {
+        // Lấy lessonCode từ input ẩn
+        const lessonCodeValue = document.getElementById("lessonCode").value;
+
+        // Loại bỏ lớp 'active' khỏi tất cả trò chơi
+        const allGames = document.querySelectorAll('.game-item');
+        allGames.forEach(function(game) {
+            game.classList.remove('active');
+        });
+
+        // Thêm lớp 'active' vào trò chơi đã chọn
+        selectedElement.classList.add('active');
+
+        // Chuyển hướng đến trang của trò chơi theo lessonCode
+        window.location.href = "/game"
+    }
+</script>
+</body>
+</html>
